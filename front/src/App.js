@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import MessageList from './Messages'
+import MessageForm from './MessageForm'
 import logo from './logo.svg';
 import './App.css';
 
@@ -7,6 +9,19 @@ class App extends Component {
   state = {
     response: ''
   };
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      messages: [],
+    }
+  } 
+
+  handleNewMessage = (text) => {
+    this.setState({
+      messages: [...this.state.messages, { me: true, author: "Me", body: text }],
+    })
+  }
 
   componentDidMount() {
     this.callApi()
@@ -26,13 +41,8 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <MessageForm onMessageSend={this.handleNewMessage} />
+        <MessageList messages={this.state.messages} />
       </div>
     );
   }

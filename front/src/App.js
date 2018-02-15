@@ -19,18 +19,17 @@ class App extends Component {
 
   handleNewMessage = (text) => {
     this.setState({
-      messages: [...this.state.messages, { me: true, author: "Me", body: text }],
-    })
-  }
+      messages: [...this.state.messages, { me: true, author: "Me", body: text },{ me: false, author: "bot", body: "Let me check..." }],
+    });
 
-  componentDidMount() {
-    this.callApi()
-      .then(res => this.setState({ response: res.express }))
+    this.readMsg(text)
+      .then(res => this.setState({ messages: [...this.state.messages, { me: false, author: "Bot", body: res.answer }]}))
       .catch(err => console.log(err));
   }
 
-  callApi = async () => {
-    const response = await fetch('/api/hello');
+  // Function to query the backend for the answer
+  readMsg = async (msg) => {
+    const response = await fetch('/messages/read?msg='+msg);
     const body = await response.json();
 
     if (response.status !== 200) throw Error(body.message);

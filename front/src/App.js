@@ -17,6 +17,22 @@ class App extends Component {
     }
   } 
 
+  componentDidMount() {
+    // Load the previous messages
+    this.getMessages()
+      .then(res => {
+        console.log(res);
+        for(var m in res.log) {
+          var temp_m = res.log[m];
+          console.log(m);
+          this.setState({
+            messages: [...this.state.messages, { me: true, author: "Me", body: temp_m.msg },{ me: false, author: "bot", body: temp_m.answer}],
+          });
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
   handleNewMessage = (text) => {
     this.setState({
       messages: [...this.state.messages, { me: true, author: "Me", body: text },{ me: false, author: "bot", body: "Let me check..." }],
@@ -36,6 +52,16 @@ class App extends Component {
 
     return body;
   };
+
+  // Getting the past message list
+  getMessages = async (msg) => {
+    const response = await fetch('/messages/get');
+    const body = await response.json();
+
+    if (response.status !== 200) throw Error(body.message);
+
+    return body;
+  }
 
   render() {
     return (
